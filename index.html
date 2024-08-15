@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Friday Night Funkin'</title>
+        <link rel="stylesheet" href="./style.css">
+        <script type="text/javascript" src="./scripts/main.js"></script>
+        <script type="text/javascript" src="./scripts/playstate.js"></script>
+    </head>
+    <body>
+        <div class="gameCanvas">
+            <div id="camWorld">
+                <img src="./assets/images/stageback.png" style="left:-600px; top:-200px;" data-scale="1.5" data-factor-x="0.5" data-factor-y="0.5">
+                <img src="./assets/images/stagefront.png" style="left:-650px; top:600px;">
+                <img src="./assets/images/stagecurtains.png" style="left:-500px; top:-300px;" data-factor-x="1.1" data-factor-y="1.1">
+                <!-- Characters -->
+                <img src="./assets/images/DaddyDearest.webp" style="left:250px; top:150px;" data-scale="1.1">
+                <img src="./assets/images/Boyfriend.webp" style="left:700px; top:400px;">
+            </div>
+            <div id="camHUD">
+                <video id="bg-video" src="./assets/audios/mes.mp4" autoplay muted></video>
+                <div id="note-strum-opponent">
+                    <img id="strum-note" src="./assets/images/notes/staticleft.png">
+                    <img id="strum-note" src="./assets/images/notes/staticdown.png">
+                    <img id="strum-note" src="./assets/images/notes/staticup.png">
+                    <img id="strum-note" src="./assets/images/notes/staticright.png">
+                    <div id="note-group-opponent"></div>
+                </div>
+                <img src="./assets/images/ui/healthBar.png" style="left: 50%; top: 90%; margin-left: -300px;">
+                <p class="textStroke" id="info-text" style="font-size: 16px; top: 95%; width: 100%; text-align: center;">Misses: 0 // Score: 0 // Accuracy: 0% [?]</p>
+            </div>  
+            <div id="camOther">
+                <p id="fps-text" class="textStroke" style="font-size: 16px; top: 10px; left: 10px;">FPS:</p>
+            </div>
+        </div>
+
+    </body>
+</html>
+
