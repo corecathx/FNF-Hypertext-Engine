@@ -10,7 +10,6 @@ const input = new Input();
 const conduct = new Conductor();
 
 var audio = new Audio('./assets/audios/Inst.ogg');
-audio.play();
 //var secAud = new Audio('./assets/audios/Voices.ogg');
 //secAud.play();
 

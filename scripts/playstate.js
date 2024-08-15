@@ -98,9 +98,7 @@ create = () => {
 
     let l = 1;
     conduct.beatTick = () => {
-        if (conduct.beats == 1) {
-            document.getElementById("bg-video").currentTime = audio.currentTime;
-        }
+        if (conduct.beats % 16 == 0) document.getElementById("bg-video").currentTime = audio.currentTime;
         if (conduct.beats % 4 == 0) {
             zoomLerp *= 1.025;
         }
@@ -112,6 +110,11 @@ create = () => {
 }
 var lawawa = new Audio('./assets/audios/hitsound.ogg');
 update = () => {
+    if (input.keyPressed(" ")) {
+        document.getElementById("bg-video").src="./assets/audios/mes.mp4";
+        audio.play();
+        document.getElementById("start-text").style.display = "none";
+    }
     const camWorld = document.getElementById("camWorld");
     const camHUD = document.getElementById("camHUD");
     const camWorldChildren = camWorld.children;
