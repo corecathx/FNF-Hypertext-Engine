@@ -11,6 +11,8 @@ html,body {
     color: #FFF;
     font-family: VCR OSD Mono;
     font-weight: lighter;
+    text-rendering:optimizeLegibility;
+
 }
 /* Game */
 .gameCanvas {
@@ -66,7 +68,7 @@ img, p {
 }
 
 /* PlayState / Gameplay */
-#note-strum-opponent {
+#note-strum-opponent, #note-strum-player {
     position: absolute;
     transform: scale(0.65);
     top: 50px;
@@ -75,4 +77,29 @@ img, p {
 .note-scroll {
     margin: 0px;
     position: absolute;
+}
+.note-scroll-player {
+    margin: 0px;
+    position: absolute;
+}
+#note-group-opponent-sustain, #note-group-player-sustain {
+    margin: 0px;
+    position: absolute;
+}
+#touch-group {
+    position:absolute;
+}
+#touch-input {
+    position:absolute;
+    height: 100%;
+}
+#bg-video {
+    height:100%;
+}
+#fps-text {
+    font-family: Consolas;
+}
+#rating-sprite {
+    position: absolute;
+    transform: scale(0.5);
 }
