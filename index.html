@@ -4,29 +4,32 @@
         <meta charset="UTF-8">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="FNF Hypertext Engine">
-        <meta property="og:description" content="A Friday Night Funkin' Engine made by CoreCat.">
+        <meta property="og:description" content="A Friday Night Funkin' Engine made in HTML, CSS, and JS.">
         <meta property="og:footer" content="Literally, awesome">
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
         <meta property="og:color" content="#7289DA">
-        <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/2048px-HTML5_logo_and_wordmark.svg.png">
         <title>Friday Night Funkin'</title>
         <link rel="stylesheet" href="./style.css">
         <script type="text/javascript" src="./scripts/main.js"></script>
         <script type="text/javascript" src="./scripts/playstate.js"></script>
+        <style>
+            #object-WorldBG {
+                width:1000px;
+                height:1000px;
+                position: absolute;
+                transform:scale(10.2);
+                background-color: rgb(160, 160, 160);
+            }
+        </style>
     </head>
     <body>
         <div class="gameCanvas">
-            <div id="camWorld" style="display: none;">
-                <img src="./assets/images/stageback.png" style="left:-600px; top:-200px;" data-scale="1.5" data-factor-x="0.5" data-factor-y="0.5">
-                <img src="./assets/images/stagefront.png" style="left:-650px; top:600px;">
-                <img src="./assets/images/stagecurtains.png" style="left:-500px; top:-300px;" data-factor-x="1.1" data-factor-y="1.1">
-                <!-- Characters -->
-                <img src="./assets/images/DaddyDearest.webp" style="left:250px; top:150px;" data-scale="1.1">
-                <img src="./assets/images/Boyfriend.webp" style="left:700px; top:400px;">
+            <div id="camWorld">
+                <div id="object-WorldBG" data-scale="10" data-factor-x="0" data-factor-y="0"></div>
             </div>
             <div id="camHUD">
-                <p class="textStroke" id="latency-text" style="font-size: 24px; top: 5%; width: 100%; text-align: center;">0.0ms</p>
                 <video id="bg-video" autoplay muted></video>
+                <p class="textStroke" id="latency-text" style="font-size: 24px; top: 5%; width: 100%; text-align: center;">0.0ms</p>
                 <div id="note-strum-opponent">
                     <div id="note-group-opponent-sustain"></div>
                     <img id="strum-note" src="./assets/images/notes/staticleft.png">

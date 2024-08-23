@@ -35,6 +35,7 @@ for path, currentDirectory, files in os.walk(d):
             uniquex = []
             uniquey = []
             for subtx in allsubtx:
+                print(subtx["name"])
                 name = re.sub(r'[^A-Za-z0-9 _%]+', '', subtx["name"])
                 left = int(subtx["x"])
                 top = int(subtx["y"])

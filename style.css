@@ -94,6 +94,10 @@ img, p {
     height: 100%;
 }
 #bg-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
     height:100%;
 }
 #fps-text {
@@ -101,5 +105,10 @@ img, p {
 }
 #rating-sprite {
     position: absolute;
-    transform: scale(0.5);
+    transform: scale(0.4);
+}
+
+#combo-sprite {
+    position: absolute;
+    transform: scale(0.3);
 }

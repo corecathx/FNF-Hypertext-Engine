@@ -31,8 +31,14 @@ var score = 0;
 var accuracy = 0;
 var misses = 0;
 
+var combo = 0;
+
 var notesTotal = 0;
 var hitNoteTotal = 0;
+
+/* Characters */
+var opponent;
+var player;
 
 /* Create Function */
 create = () => {
@@ -66,35 +72,71 @@ create = () => {
     });
 
     let l = 1;
-    conduct.beatTick = () => {
-        if (conduct.beats % 4 === 0) {
+    game.conduct.beatTick = () => {
+        if (game.conduct.beats % 4 === 0) {
             zoomLerp *= 1.025;
             hudZoomLerp *= 1.055;
         }
         l = (l + 1) % 4;
+        if (game.conduct.beats % 2 == 0) {
+            opponent.dance();
+            player.dance();
+        }
+
     };
 
     document.getElementById("camOther").onclick = () => {
         mobilepress = true;
-        console.log("hi");
     };
 
-    loadNotesFromFile('./assets/audios/cocoa-erect.json');
+    opponent = new Character(0,0,"yuriDeb8");
+    document.getElementById("camWorld").appendChild(opponent.object);
+
+    player = new Character(590,300,"bfDeb8");
+    document.getElementById("camWorld").appendChild(player.object);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let sng = urlParams.get('song');
+    if (!sng) {
+        alert("Please specify a song first.");
+        document.body.remove();
+    }
+    loadSong(sng ? sng : "Deb8");
 };
+
+var songName = "";
+function loadSong(name) {
+    switch (name) {
+        case "Deb8": 
+            document.getElementById("camWorld").style.display = "block";
+            break;
+        default: 
+            document.getElementById("camWorld").style.display = "none";
+            break;
+    }
+    songName = name;
+    let songPath = `./assets/songs/${songName}/`;
+    audio.src = songPath+"audio.ogg";
+    secAud.src = songPath+"audio-1.ogg";
+    loadNotesFromFile(songPath+"chart.json");
+}
 
 /* Update Function */
 update = () => {
     if (canStart) {
-        if (isMobile() ? mobilepress : input.keyPressed(" ")) {
+        if (isMobile() ? mobilepress : game.input.keyPressed(" ")) {
             document.getElementById("camOther").onclick = () => { };
             mobilepress = false;
-            //document.getElementById("bg-video").src = "./assets/audios/mes.mp4";
+            document.getElementById("bg-video").src = `/assets/songs/${songName}/video.mp4`;
 
             secAud.play();
             audio.play();
             document.getElementById("start-text").style.display = "none";
         }
     }
+
+    opponent.update(game.elapsed);
+    player.update(game.elapsed);
 
     _updateRatingGroup();
     _updateCameraAndHUD();
@@ -106,9 +148,9 @@ function _updateRatingGroup() {
         let curY = parseFloat(rating.style.top.substring(0,rating.style.top.length - 2));
         curY += parseFloat(rating.dataset.accY);
         rating.style.top = `${curY}px`;
-        rating.dataset.accY = parseFloat(rating.dataset.accY) + 0.5;
+        rating.dataset.accY = parseFloat(rating.dataset.accY) + 0.4;
         let alpha = 1;
-        if (curY > window.innerHeight/2) {
+        if (curY > (window.innerHeight/2)-200) {
             alpha = 1-((curY-window.innerHeight/2) / ((window.innerHeight/2)-200));
             if (alpha < 0) {
                 document.getElementById("rating-group").removeChild(rating);
@@ -122,15 +164,22 @@ function _updateCameraAndHUD() {
     const camHUD = document.getElementById("camHUD");
 
     // World camera movement.
-    if (input.keyHeld('ArrowUp')) translateY += 10;
-    if (input.keyHeld('ArrowDown')) translateY -= 10;
-    if (input.keyHeld('ArrowLeft')) translateX += 10;
-    if (input.keyHeld('ArrowRight')) translateX -= 10;
+    if (game.input.keyHeld('ArrowUp')) translateY += 10;
+    if (game.input.keyHeld('ArrowDown')) translateY -= 10;
+    if (game.input.keyHeld('ArrowLeft')) translateX += 10;
+    if (game.input.keyHeld('ArrowRight')) translateX -= 10;
 
     // World camera zoom handling.
-    if (input.keyHeld('q')) zoomLevel *= 0.95;
-    if (input.keyHeld('e')) zoomLevel *= 1.05;
-    if (input.keyHeld("r")) zoomLevel = 1;
+    if (game.input.keyHeld('q')) zoomLevel *= 0.95;
+    if (game.input.keyHeld('e')) zoomLevel *= 1.05;
+    if (game.input.keyHeld("r")) zoomLevel = 1;
+
+    if (game.input.keyHeld("z")) {
+        audio.playbackRate = secAud.playbackRate = document.getElementById("bg-video").playbackRate *= 0.99;
+    }
+    if (game.input.keyHeld("x")) {
+        audio.playbackRate = secAud.playbackRate = document.getElementById("bg-video").playbackRate *= 1.01;
+    }
 
     // Lerping cuz' they look smooth
     lerpX = lerp(translateX, lerpX, 0.96);
@@ -151,13 +200,13 @@ function _updateCameraAndHUD() {
     camHUD.style.transform = `scale(${hudZoomLerp})`;
 
     // Timer.
-    document.getElementById('latency-text').innerHTML = audio.paused ? 'Cocoa [FNF\': Animania!]' : `${getCurrentDuration(conduct.time)} / ${getCurrentDuration(audio.duration * 1000)}`;
+    document.getElementById('latency-text').innerHTML = audio.paused ? songName : `${getCurrentDuration(game.conduct.time)} / ${getCurrentDuration(audio.duration * 1000)}`;
     document.getElementById("info-text").innerHTML = `Misses: ${misses} // Score: ${score} // Accuracy: ${(accuracy*100).toFixed(1)}%`;
 }
 
 function _noteHandler() {
     // Notes Spawning //
-    while (notes[0] && Math.abs(conduct.time - notes[0][0]) < 1500) {
+    while (notes[0] && Math.abs(game.conduct.time - notes[0][0]) < 1500) {
         const [time, noteId, hold] = notes[0].map(Number);
         const id = noteId % 4;
         const curPlayer = noteId > 3;
@@ -172,7 +221,7 @@ function _noteHandler() {
 
     // Notes Positioning //
     forEachNotes((note) => {
-        const topPosition = 50 - (0.45 * (conduct.time - note.dataset.time) * scrollSpeed);
+        const topPosition = 50 - (0.45 * (game.conduct.time - note.dataset.time) * scrollSpeed);
         note.style.top = `${topPosition}px`;
 
         if (topPosition < -2000) {
@@ -194,7 +243,11 @@ function _noteHandler() {
         confirmleft: './assets/images/notes/staticleft-confirm.png',
         confirmdown: './assets/images/notes/staticdown-confirm.png',
         confirmup: './assets/images/notes/staticup-confirm.png',
-        confirmright: './assets/images/notes/staticright-confirm.png'
+        confirmright: './assets/images/notes/staticright-confirm.png',
+        pressleft: './assets/images/notes/staticleft-press.png',
+        pressdown: './assets/images/notes/staticdown-press.png',
+        pressup: './assets/images/notes/staticup-press.png',
+        pressright: './assets/images/notes/staticright-press.png'
     };
 
     const keyBindings = [
@@ -205,25 +258,26 @@ function _noteHandler() {
     ];
 
     const handleNoteAction = (child, index, name, anim, curString) => {
-        const held = isMobile() ? mobTouch[index] : input.keyHeld(name);
-        const pressed = isMobile() ? mobTap[index] : input.keyPressed(name);
-        const released = input.keyReleased(name);
+        const held = isMobile() ? mobTouch[index] : game.input.keyHeld(name);
+        const pressed = isMobile() ? mobTap[index] : game.input.keyPressed(name);
+        const released = game.input.keyReleased(name);
 
         if (released) {
             curString = noteImages[anim];
         }
 
         if (held) {
+            player.holdTime = 0;
             forEachNotes(note => {
                 if (note.className !== "note-scroll-player") return;
-                if (note.dataset.end === 'false' && conduct.time > note.dataset.time && note.dataset.data === `${index}`) {
+                if (note.dataset.end === 'false' && game.conduct.time > note.dataset.time && note.dataset.data === `${index}`) {
                     const length = parseFloat(note.dataset.length);
                     if (length > 0) {
-                        const supposedY = 0.45 * (conduct.time - note.dataset.time) * scrollSpeed;
+                        const supposedY = 0.45 * (game.conduct.time - note.dataset.time) * scrollSpeed;
                         note.style.top = `${50 + (160 / 2)}px`;
                         note.style.height = `${length * scrollSpeed * 0.45 - (supposedY + (supposedY < 50 + (160 / 2) ? 0 : 80))}px`;
                     }
-                } else if (note.dataset.time < conduct.time + 100 && note.dataset.data === `${index}` && note.dataset.sustain === 'true') {
+                } else if (note.dataset.time < game.conduct.time + 100 && note.dataset.data === `${index}` && note.dataset.sustain === 'true') {
                     const pref = note.dataset.sustain === "true" ? "-sustain" : "";
                     document.getElementById('note-group-player' + pref).removeChild(note);
                 }
@@ -231,6 +285,7 @@ function _noteHandler() {
         }
 
         if (pressed) {
+            curString = noteImages["press"+anim];
             let possibleNotes = [];
             let directions = [false, false, false, false];
             
@@ -241,7 +296,7 @@ function _noteHandler() {
                 let noteData = parseInt(note.dataset.data);
                 let time = parseFloat(note.dataset.time);
                 
-                if ((conduct.time - time > -250 && conduct.time - time < 300)) {
+                if ((game.conduct.time - time > -250 && game.conduct.time - time < 300)) {
                     if (directions[noteData]) {
                         for (let i = 0; i < possibleNotes.length; i++) {
                             let pNote = possibleNotes[i];
@@ -271,10 +326,10 @@ function _noteHandler() {
             possibleNotes.sort((a, b) => (parseFloat(a.dataset.time) - parseFloat(b.dataset.time)));
 
             let pressArray = [
-                input.keyPressed("s"),
-                input.keyPressed("d"),
-                input.keyPressed("k"),
-                input.keyPressed("l"),
+                game.input.keyPressed("s"),
+                game.input.keyPressed("d"),
+                game.input.keyPressed("k"),
+                game.input.keyPressed("l"),
             ]
             
             let blockNote = false;
@@ -286,10 +341,12 @@ function _noteHandler() {
                 for (let i = 0; i < possibleNotes.length; i++) {
                     let note = possibleNotes[i];
                     if (pressArray[parseInt(note.dataset.data)]) {
-                        ratingPopUp(Math.abs(conduct.time - note.dataset.time));
+                        combo++;
+                        ratingPopUp(Math.abs(game.conduct.time - note.dataset.time));
                         const pref = note.dataset.sustain === "true" ? "-sustain" : "";
                         document.getElementById('note-group-player' + pref).removeChild(note);
                         curString = noteImages["confirm"+anim];
+                        player.playAnim("sing"+["LEFT","DOWN","UP","RIGHT"][parseInt(note.dataset.data)], true);
                         notesTotal++;
                     }
                 }
@@ -300,6 +357,7 @@ function _noteHandler() {
     };
 
     if (!usingBotplay) {
+        // Player
         let index = 0;
         children.forEach((child) => {
             if (child.id === "strum-note") {
@@ -319,31 +377,36 @@ function _noteHandler() {
             }
         });
 
+        // Opponent
         forEachNotes(note => {
             if (note.className !== "note-scroll-player") {
                 const noteTime = parseFloat(note.dataset.time);
                 const noteLength = parseFloat(note.dataset.length);
                 const top = 50 + (160 / 2);
-                const supposedY = 0.45 * (conduct.time - noteTime) * scrollSpeed;
+                const supposedY = 0.45 * (game.conduct.time - noteTime) * scrollSpeed;
 
                 if (note.dataset.end === 'false') {
-                    if (noteLength === 0 && conduct.time > noteTime) {
+                    if (noteLength === 0 && game.conduct.time > noteTime) {
                         document.getElementById('note-group-opponent').removeChild(note);
-                    } else if (noteLength > 0 && conduct.time > noteTime) {
+                        opponent.playAnim("sing"+["LEFT","DOWN","UP","RIGHT"][parseInt(note.dataset.data)], true);
+                    } else if (noteLength > 0 && game.conduct.time > noteTime) {
                         note.style.top = `${top}px`;
                         note.style.height = `${noteLength * scrollSpeed * 0.45 - (supposedY + 80)}px`;
                     }
                 } else if (note.dataset.end === 'true') {
-                    const pref = note.dataset.sustain === "true" ? "-sustain" : "";
-                    document.getElementById('note-group-player' + pref).removeChild(note);
+                    if (game.conduct.time > noteTime) {
+                        const pref = note.dataset.sustain === "true" ? "-sustain" : "";
+                        document.getElementById('note-group-opponent' + pref).removeChild(note);
+                    }
+
                 }
             }
         });
     } else {
         forEachNotes(note => {
-            if (conduct.time > parseFloat(note.dataset.time)) {
+            if (game.conduct.time > parseFloat(note.dataset.time)) {
                 const pref = note.dataset.sustain === "true" ? "-sustain" : "";
-                document.getElementById('latency-text').innerHTML = `${Math.abs(conduct.time - parseFloat(note.dataset.time)).toFixed(2)}ms`;
+                document.getElementById('latency-text').innerHTML = `${Math.abs(game.conduct.time - parseFloat(note.dataset.time)).toFixed(2)}ms`;
                 document.getElementById('note-group-player' + pref).removeChild(note);
             }
         });
@@ -361,7 +424,6 @@ function forEachNotes(callback) {
         try {
             callback(element);
         } catch (error) {
-            // Handle the error if necessary
         }
     });
 }
@@ -422,7 +484,7 @@ function loadNotesFromFile(url) {
         })
         .then(data => {
             const notesArray = data.song.notes;
-            conduct.changeBPM(data.song.bpm);
+            game.conduct.changeBPM(data.song.bpm);
             scrollSpeed = data.song.speed;
             notesArray.forEach((noteSection) => {
                 const sectionNotes = noteSection.sectionNotes;
@@ -470,12 +532,21 @@ function ratingPopUp(diff) {
 
     accuracy = hitNoteTotal / notesTotal;
 
+    createRating(ratingText,0.35,0.45);
+
+    let comboArray = combo.toString().split("");
+    for (let i = 0; i<comboArray.length;i++){
+        createRating("num"+comboArray[i],0.40+(0.025*i),0.55,true);
+    }
+}
+
+function createRating(img,multX,multY, isCombo = false) {
     const rating = document.createElement("img");
-    rating.src = `./assets/images/ui/${ratingText}.png`;
-    rating.id = "rating-sprite";
-    rating.style.left = `${window.innerWidth * 0.35}px`;
-    rating.style.top = `${window.innerHeight * 0.45}px`;
-    rating.dataset.accY = -10;
+    rating.src = `./assets/images/ui/${img}.png`;
+    rating.id = isCombo ? "combo-sprite" : "rating-sprite";
+    rating.style.left = `${window.innerWidth * multX}px`;
+    rating.style.top = `${window.innerHeight * multY}px`;
+    rating.dataset.accY = -5;
     rating.dataset.accX = Math.random()*10;
     document.getElementById("rating-group").appendChild(rating);
 }

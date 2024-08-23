@@ -1,0 +1,24 @@
+{
+    "frames":{
+        "singLEFT": {
+            "offset": [0,0],
+            "name": "left"
+        },
+        "singDOWN": {
+            "offset": [0,0],
+            "name": "down"
+        },
+        "singUP": {
+            "offset": [0,0],
+            "name": "up"
+        },
+        "singRIGHT": {
+            "offset": [0,0],
+            "name": "right"
+        },
+        "idle": {
+            "offset": [0,0],
+            "name": "idle"
+        }
+    }
+}
