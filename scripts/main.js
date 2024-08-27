@@ -20,7 +20,7 @@ const isMobile = () => {
 };
 
 /* Game */
-const _FPS = 240;
+const trace = (data) =>{console.log(data)}
 
 var audio = new Audio('./assets/audios/Inst.ogg');
 var secAud = new Audio('./assets/audios/Voices.ogg');
@@ -43,8 +43,9 @@ function innerUpdate() {
     game.elapsed = 1/times.length;
 
     setTimeout(()=>{
-        requestAnimationFrame(innerUpdate)
-    }, (1 / (_FPS + 5)) * 1000);
+        innerUpdate();
+        //requestAnimationFrame(innerUpdate)
+    }, (1 / (game.info.fps + 5)) * 1000);
 }
 
 /* FPS Counter */
@@ -71,6 +72,14 @@ var updateFPS = ()=> {
     if (game.input.keyPressed("2")) {
         showingInfos = !showingInfos;
     }
+
+    if (game.input.keyHeld("6")) {
+        game.info.fps -= 1;
+    }
+
+    if (game.input.keyHeld("7")) {
+        game.info.fps += 1;
+    }
     
     let additionalInfo = !showingInfos ? "" : `
         Browser: ${navigator.appName}<br>
@@ -79,7 +88,7 @@ var updateFPS = ()=> {
         Game: ${game}
     `;
 
-    let SPF = `<span style="font-size:12px; color:gray;">(${(1/times.length).toPrecision(1)}ms)</span>`;
+    let SPF = `<span style="font-size:12px; color:gray;">(${((1/times.length).toPrecision(1))*1000}ms)</span>`;
     document.getElementById("fps-text").innerHTML = `
         <span style="font-size:22px;">${times.length}</span> FPS ${SPF}<br>
         ${strMem}<br>
@@ -200,6 +209,8 @@ function HARD_INIT_ALL() {
             this.y = y;
             this.name = name;
             this.object = document.createElement("img");
+            this.object.style.left = `${this.x}px`;
+            this.object.style.top = `${this.y}px`;
 
             this.curAnim = "";
             this.frames = {};
@@ -235,7 +246,7 @@ function HARD_INIT_ALL() {
             }
         }
     
-        async playAnim(name, forced = false) {
+        playAnim(name, forced = false) {
             if (!this.frames[name]) {
                 console.error(`Animation '${name}' does not exist.`);
                 return;
@@ -246,9 +257,10 @@ function HARD_INIT_ALL() {
             let newSrc = `./assets/data/chars/${this.name}/${frame.name}.gif`;
 
             if (this.object.src === newSrc) this.object.src = "";
-            this.object.src = newSrc;
             this.object.style.left = `${this.x + frame.offset[0]}px`;
             this.object.style.top = `${this.y + frame.offset[1]}px`;
+            this.object.src = newSrc;
+            this.holdTime = 0;
         }
         
         dance() {

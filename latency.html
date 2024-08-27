@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="FNF Hypertext Engine">
+        <meta property="og:description" content="A Friday Night Funkin' Engine made in HTML, CSS, and JS.">
+        <meta property="og:footer" content="Literally, awesome">
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+        <meta property="og:color" content="#7289DA">
+        <title>Hypertext Engine</title>
+        <link rel="shortcut icon" href="./icon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="./style.css">
+        <script type="text/javascript" src="./scripts/main.js"></script>
+        <script type="text/javascript" src="./scripts/latency.js"></script>
+        <style>
+            #latency-scroll {
+                position: absolute;
+                width: 200px;
+                height: 5px;
+                top: 10%;
+                left: 50%;
+                transform: translate(-50%,0px);
+                background-color: white;
+            }
+            #latency-mark {
+                position: absolute;
+                width: 200px;
+                height: 5px;
+                left: 50%;
+                transform: translate(-50%,0px);
+                background-color: rgb(87, 87, 87);
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="gameCanvas">
+            <div id="camHUD">
+                <p id="song-name" class="textStroke" style="font-size: 28px; top: 30px; width: 100%; text-align: center;">Song Here</p>
+                <div id="latencyBox">
+                    <div id="latency-scroll"></div>
+                </div>
+            </div>
+            <div id="camOther">
+                <p id="fps-text" class="textStroke" style="font-size: 16px; top: 10px; left: 10px;">FPS:</p>
+            </div>
+        </div>
+    </body>
+</html>
+

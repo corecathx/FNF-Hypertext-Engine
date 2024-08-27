@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="FNF Hypertext Engine">
+        <meta property="og:description" content="A Friday Night Funkin' Engine made in HTML, CSS, and JS.">
+        <meta property="og:footer" content="Literally, awesome">
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+        <meta property="og:color" content="#7289DA">
+        <title>Hypertext Engine</title>
+        <link rel="shortcut icon" href="./icon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="./style.css">
+        <script type="text/javascript" src="./scripts/main.js"></script>
+        <script type="text/javascript" src="./scripts/playstate.js"></script>
+        <style>
+            #object-WorldBG {
+                width:1000px;
+                height:1000px;
+                position: absolute;
+                transform:scale(10.2);
+                background-color: rgb(160, 160, 160);
+            }
+
+            #healthBar {
+                position: absolute;
+                top: 90%;
+                left: 50%;
+                transform: translate(-50%,-0px);
+                padding: 5px;
+                background-color: black;
+            }
+            #healthBar-PL {
+                width: 600px;
+                height: 10px;
+                background-color: rgb(0, 255, 0);
+            }
+            #healthBar-OP {
+                width: 50%;
+                height: 10px;
+                background-color: rgb(255, 0, 0);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="gameCanvas">
+            <div id="camWorld">
+                <div id="object-WorldBG" data-scale="10" data-factor-x="0" data-factor-y="0"></div>
+            </div>
+            <div id="camHUD">
+                <video id="bg-video" autoplay muted></video>
+                <p class="textStroke" id="latency-text" style="font-size: 24px; top: 5%; width: 100%; text-align: center;">0.0ms</p>
+                <div id="note-strum-opponent">
+                    <div id="note-group-opponent-sustain"></div>
+                    <img id="strum-note" src="./assets/images/notes/staticleft.png">
+                    <img id="strum-note" src="./assets/images/notes/staticdown.png">
+                    <img id="strum-note" src="./assets/images/notes/staticup.png">
+                    <img id="strum-note" src="./assets/images/notes/staticright.png">
+                    <div id="note-group-opponent"></div>
+                </div>
+                <div id="note-strum-player">
+                    <div id="note-group-player-sustain"></div>
+                    <img id="strum-note" src="./assets/images/notes/staticleft.png">
+                    <img id="strum-note" src="./assets/images/notes/staticdown.png">
+                    <img id="strum-note" src="./assets/images/notes/staticup.png">
+                    <img id="strum-note" src="./assets/images/notes/staticright.png">
+                    <div id="note-group-player"></div>
+                </div>
+                <div id="healthBar">
+                    <div id="healthBar-PL">
+                        <div id="healthBar-OP">
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <p class="textStroke" id="info-text" style="font-size: 16px; top: 95%; width: 100%; text-align: center;">Misses: 0 // Score: 0 // Accuracy: 0% [?]</p>
+                <p class="textStroke" id="start-text" style="font-size: 20px; top: 80%; width: 100%; text-align: center;">[[Press SPACE to Start]]</p>
+                <div id="rating-group"></div>
+                <div id="countdown-group"></div>
+            </div>  
+            <div id="camOther">
+                <div id="touch-group">
+                    <div id="touch-input"></div>
+                    <div id="touch-input"></div>
+                    <div id="touch-input"></div>
+                    <div id="touch-input"></div>
+                </div>
+
+                <p id="fps-text" class="textStroke" style="font-size: 16px; top: 10px; left: 10px;">FPS:</p>
+            </div>
+        </div>
+
+    </body>
+</html>
+

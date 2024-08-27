@@ -39,11 +39,11 @@ for path, currentDirectory, files in os.walk(d):
                 name = re.sub(r'[^A-Za-z0-9 _%]+', '', subtx["name"])
                 left = int(subtx["x"])
                 top = int(subtx["y"])
-                if left in uniquex and top in uniquey and uniquey[uniquex.index(left)] == top:
-                    continue
-                else:
-                    uniquex.append(left)
-                    uniquey.append(top)
+                #if left in uniquex and top in uniquey and uniquey[uniquex.index(left)] == top:
+                #    continue
+                #else:
+                uniquex.append(left)
+                uniquey.append(top)
                 right = left + int(subtx["width"])
                 bottom = top + int(subtx["height"])
                 subimg = wholeimage.crop((left, top, right, bottom))
